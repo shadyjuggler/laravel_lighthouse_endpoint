@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
+use App\Models\Post;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -15,9 +17,31 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        User::factory(10)->create();
+
+        $user_ids = User::pluck('id')->toArray();
+
+        foreach($user_ids as $user_id) {
+
+            for($i = 0; $i < rand(2, 10); $i++) {
+                Post::create([
+                    'author_id' => $user_id,
+                    'title' => fake()->jobTitle,
+                    'content' => fake()->text(100)
+                ]);
+            }
+        }
+
+        $post_ids = Post::pluck('id')->toArray();
+
+        foreach($post_ids as $post_id) {
+
+            for($i = 0; $i < rand(1, 5); $i++) {
+                Comment::create([
+                    'post_id' => $post_id,
+                    'reply' => fake()->text(100),
+                ]);
+            }
+        }
     }
 }
